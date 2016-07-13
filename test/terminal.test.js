@@ -31,12 +31,15 @@ describe('Matrix CLI commands', function() {
                     if (out.toString().indexOf('username') > -1) {
                         loginProc.stdin.write('demo.admobilize@gmail.com\n')
                         outputs.push(out.toString());
-                        console.log('brayannn',outputs.push(out.toString());
+                        console.log('brayannn',outputs.push(out.toString()));
                     } else if (out.toString().indexOf('password') > -1) {
                         loginProc.stdin.write('admobdemo2016\n')
+                        console.log('brayannn--',outputs.push(out.toString()));
                     } else if (out.toString().indexOf('Login Successful') > -1) {
+                        console.log('brayannn--',outputs.push(out.toString()));
                         // console.log(out.toString().red);
                         if (readConfig().user.hasOwnProperty('token')) {
+                            console.log('brayannn--',outputs.push(out.toString()));
                             console.log(out.toString().red);
                             done();
                         }
