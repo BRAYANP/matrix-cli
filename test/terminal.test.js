@@ -1,19 +1,20 @@
 var run = require('child_process').spawn;
 var exec = require('child_process').exec;
 var colors = require('colors');
+var should = require('should');
 
 
 describe('Matrix CLI commands', function() {
     context('Not logged in {', function() {
         it('should show a log in warning ', function(done) {
-            var NotloggedProc = run('matrix', ['']);
-
-            NotloggedProc.stdout.on('data', function(out) {
-
+            var notloggedProc = run('matrix', ['']);
+            var outputs = [];
+            notloggedProc.stdout.on('data', function(out) {
+                outputs.push(out.toString());
             });
-            NotloggedProc.on('close', function(code) {
-                console.log('Use "Matrix Login"'.yellow);
-                console.log('Close'.red);
+
+            notloggedProc.on('close', function (code) {
+                (outputs.length).should.be.above(15);
                 done();
             });
 
@@ -23,9 +24,14 @@ describe('Matrix CLI commands', function() {
             it('should request user credentials...', function(done) {
                 this.timeout(15000);
                 var loginProc = run('matrix', ['login']);
+                var outputs = [];
                 loginProc.stdout.on('data', function(out) {
+
+
                     if (out.toString().indexOf('username') > -1) {
                         loginProc.stdin.write('demo.admobilize@gmail.com\n')
+                        outputs.push(out.toString());
+                        console.log('brayannn',outputs.push(out.toString());
                     } else if (out.toString().indexOf('password') > -1) {
                         loginProc.stdin.write('admobdemo2016\n')
                     } else if (out.toString().indexOf('Login Successful') > -1) {
