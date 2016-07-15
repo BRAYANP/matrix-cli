@@ -20,57 +20,78 @@ describe('Matrix CLI commands', function() {
 
         });
 
-        context('login', function() {
+        context('login ', function() {
+
+            after(function(done) {
+                    exec('matrix logout')
+                    console.log('cierra sesion');
+                    done();
+                })
+
             it('should request user credentials...', function(done) {
                 this.timeout(15000);
                 var loginProc = run('matrix', ['login']);
                 var outputs = [];
                 loginProc.stdout.on('data', function(out) {
-
-
-                    if (out.toString().indexOf('username') > -1) {
+                    outputs.push(out.toString());
+                    if (out.indexOf('username') > -1) {
                         loginProc.stdin.write('demo.admobilize@gmail.com\n')
-                        outputs.push(out.toString());
-                        console.log('brayannn',outputs.push(out.toString()));
+                        //outputs.push(out.toString());
+                        console.log('brayan111',outputs);
                     } else if (out.toString().indexOf('password') > -1) {
                         loginProc.stdin.write('admobdemo2016\n')
-                        console.log('brayannn--',outputs.push(out.toString()));
+                        console.log('brayan222--',outputs);
                     } else if (out.toString().indexOf('Login Successful') > -1) {
-                        console.log('brayannn--',outputs.push(out.toString()));
+                        console.log('brayannn--',outputs);
                         // console.log(out.toString().red);
                         if (readConfig().user.hasOwnProperty('token')) {
-                            console.log('brayannn--',outputs.push(out.toString()));
-                            console.log(out.toString().red);
-                            done();
+                            console.log('brayannn--',outputs.push(out.toString())); 
+                            console.log(outputs.toString().red);
+                           
                         }
                     }
 
                 });
 
-                after(function(done) {
-                    exec('matrix logout')
-                    done();
-                })
-
-            });
-
-        });
-
-        context('logout', function() {
-            it('should show a log in warning ', function(done) {
-                var logoutProc = run('matrix', ['logout']);
-                logoutProc.stdout.on('data', function(out) {
-                    console.log(out.toString());
+                loginProc.on('close', function(code) {
+                   outputs.should.matchAny(/username/);
+                   outputs.should.matchAny(/password/);
                     done();
                 });
+
             });
-        }); //Logout
+                
+        });
 
-        context('use', function() {
-            it('should show a log in warning USE', function(done) {
+    context('logout Brayan', function() {
+
+            it.skip('should show a logout in warning ', function(done) {
+                var outputs = [];
+                var logoutProc = run('matrix', ['logout']);
+                
+                logoutProc.stdout.on('data', function(out) {
+                    outputs.push(out.toString());
+                }); 
+
+                logoutProc.on('close', function(code) {
+                    
+                   outputs.should.matchAny(/login please/);
+                        console.log('Close',outputs.toString());             
+                        done();
+                });
+            });
+        }); // finish Logout
+
+
+        context('use Brayan', function() {
+            it('should show a in warning', function(done) {
                 var useProc = run('matrix', ['use']);
+                var outputs = [];
 
-                useProc.stdout.on('data', function(out) {});
+                useProc.stdout.on('data', function(out) {
+                    outputs.push(out.toString());
+                });
+
                 useProc.on('close', function(code) {
                     console.log('Use "Matrix Login"'.yellow);
                     console.log('Close'.red);
@@ -78,7 +99,7 @@ describe('Matrix CLI commands', function() {
                 });
 
             });
-        }); // finish use
+        }); //  use
 
 
         context('sim', function() {
@@ -749,7 +770,12 @@ describe('Matrix CLI commands', function() {
                         });
 
                         context('Valid app/sensor name', function() {
-                            it.skip('should install the app or sensor specified to active MatrixOS device', function(done) {});
+                            context('app is already installed',function(){
+                                 it.skip('should show warning app already installed', function(done) {});
+                            });
+                            context('app isn\'t already installed',function(){
+                                 it.skip('should install the app or sensor specified to active MatrixOS device', function(done) {});
+                            });
                         });
                     });
                 }); //finish install
