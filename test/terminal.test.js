@@ -2,10 +2,28 @@ var run = require('child_process').spawn;
 var exec = require('child_process').exec;
 var colors = require('colors');
 var should = require('should');
+var sinon = require('sinon');
 
 
 var strings = {};
-strings.login_message = 'Use "matrix login"';
+strings = {
+    login: {
+        login_warning: 'Use "matrix login"',
+        already_logged_in_warning: 'already logged in',
+        log_out_successfully: 'log out successfully'
+    },
+    use: {
+        device_use_warning: 'matrix use <deviceid>',
+        invalid_device: 'invalid device',
+        doesnt_permission: 'invalid device,doesn\'t have permission',
+        conect_device_successfully: 'Now using device id',
+    },
+    sim: {
+        sim_usage_command: 'matrix sim upgrade',
+        sim_init_request_credencials: 'Please enter information for this virtual device',
+        sim_restore_warning :''
+    }
+}
 
 
 describe('Matrix CLI commands', function () {
@@ -78,7 +96,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 logoutProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message));
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning));
                     console.log('Close', outputs.toString());
                     done();
                 });
@@ -96,7 +114,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 useProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message));
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning));
                     done();
                 });
             });
@@ -114,7 +132,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 simProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     console.log('close', outputs)
                     done();
                 });
@@ -132,7 +150,7 @@ describe('Matrix CLI commands', function () {
                     outputs.push(out.toString());
                 });
                 listProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
             });
@@ -153,7 +171,7 @@ describe('Matrix CLI commands', function () {
 
                 setProc.on('close', function (code) {
                     console.log('close', outputs);
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
 
                     done();
                 });
@@ -170,7 +188,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 rebootProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
 
@@ -186,7 +204,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 searchProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
             });
@@ -204,7 +222,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 installProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message));
+                    errors.should.matchAny(new RegExp(strings.login.login_warning));
                     done();
                 });
 
@@ -221,7 +239,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 configProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message))
+                    errors.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
             });
@@ -237,7 +255,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 uninstallProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message))
+                    errors.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
 
@@ -255,7 +273,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 updateProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     console.log('close', outputs)
                     done();
                 });
@@ -273,7 +291,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 startProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
 
@@ -290,7 +308,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 stopProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
 
@@ -307,7 +325,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 restartProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message))
+                    errors.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
 
@@ -323,7 +341,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 createProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message))
+                    errors.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
             });
@@ -339,7 +357,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 deployProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message))
+                    errors.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
             });
@@ -354,7 +372,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 triggerProc.on('close', function (code) {
-                    errors.should.matchAny(new RegExp(strings.login_message))
+                    errors.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
 
@@ -370,15 +388,22 @@ describe('Matrix CLI commands', function () {
                 });
 
                 logProc.on('close', function (code) {
-                    outputs.should.matchAny(new RegExp(strings.login_message))
+                    outputs.should.matchAny(new RegExp(strings.login.login_warning))
                     done();
                 });
             });
         }); //finish log
     });
 
+
+
+
+
+
+
     context('Logged in {', function () {
-        /* before(function (done) {
+        before(function (done) {
+            this.timeout(15000);
               var loginProc = run('matrix', ['login']);
                  loginProc.stdout.on('data', function (out) {
                      if (out.toString().indexOf('username') > -1) {
@@ -389,18 +414,26 @@ describe('Matrix CLI commands', function () {
                          // console.log(out.toString().red);
                          if (readConfig().user.hasOwnProperty('token')) {
                              console.log(out.toString().red);
-                             done();
+                            // done();
                          }
                      }
-                     
+             
+         });
+                 loginProc.on('close', function(code) {
+                 console.log('close')                         
+                 done();
                  });
-                   done();
-                 })*/
+           
+        })
+
+
+
+
 
         //NO DEVICE REQUIRED
 
         context('No parameters specified', function () {
-            it('should show the matrix command usage', function (done) {
+            it.skip('should show the matrix command usage', function (done) {
                 var logProc = run('matrix', ['']);
                 var outputs = new Array();
                 logProc.stdout.on('data', function (out) {
@@ -408,7 +441,7 @@ describe('Matrix CLI commands', function () {
                 });
 
                 logProc.on('close', function (code) {
-                    outputs.should.matchAny(/SETUP/)
+                    (outputs.length).should.be.above(15);//cambio
                     done();
                 });
 
@@ -418,63 +451,61 @@ describe('Matrix CLI commands', function () {
         context('Parameters specified', function () {
 
             context('login_NDR', function () {
-                it('should show an "already logged in" warning', function (done) {
+                it.skip('should show an "already logged in" warning', function (done) {
 
                     var loginProc = run('matrix', ['login']);
                     var outputs = new Array();
                     loginProc.stdout.on('data', function (out) {
                         outputs.push(out.toString());
-                        outputs.should.matchAny(/already logged in/)
+                        outputs.should.matchAny(new RegExp(strings.login.already_logged_in_warning));
                         done();
                     });
                 });
             }); // finish login
 
 
-            context('logout', function () {
-                it('should log out', function (done) {
-
+             context('logout', function () {
+                it.skip('should log out', function (done) {
                     var logoutProc = run('matrix', ['logout']);
-                    logoutProc.stdout.on('data', function (out) { });
+                    var outputs = new Array();
+                    logoutProc.stdout.on('data', function(out) {
+                    outputs.push(out.toString());
+                    });
 
-                    logoutProc.on('close', function (code) {
-                        console.log('log out  Successfully.....'.magenta);
-                        console.log('Close'.red);
+                    logoutProc.on('close', function(code) {
+                        outputs.should.matchAny(new RegExp(strings.login.log_out_successfully));
                         done();
                     });
                 });
-            }); //finish Logout
+            }); // finish Logout
 
-            context('use', function () {
-                context('No parameters specified ', function () {
+            context('use', function () { 
+                 context('No parameters specified ', function () {
                     it('Show "use" command usage', function (done) {
-                        var useProc = run('matrix', ['']);
-
-                        useProc.stdout.on('data', function (out) { });
-
-                        useProc.on('close', function (code) {
-                            console.log('Please select on device "matrix use (devicename)"'.yellow);
-                            console.log('Close'.red);
+                        var useProc = run('matrix', ['use']);
+                        var outputs = new Array();
+                        useProc.stdout.on('data', function(out) {
+                            outputs.push(out.toString());
+                        });
+                        useProc.on('close', function(code) {
+                            outputs.should.matchAny(new RegExp(strings.use.device_use_warning));
                             done();
                         });
-
-                    });
-                });
+                     });
+                     
+                }); // finish                       
 
                 context('Parameters specified', function () {
 
                     context('Specified device doesn\'t exist', function () {
-                        it('should show an "invalid device" warning', function (done) {
-                            var useDProc = run('matrix', ['use', '']);
-
-                            //console.log('BRAYAN',useDProc);
-                            useDProc.stdout.on('data', function (out) {
-                                console.log('BRAYAN', out.toString().red);
+                        it.skip('should show an "invalid device" warning', function (done) {
+                            var useDProc = run('matrix', ['use','xx']);
+                            var outputs = new Array();
+                            useDProc.stdout.on('data', function(out) {
+                                outputs.push(out.toString());
                             });
-
-                            useDProc.on('close', function (code) {
-                                console.log('invalid device'.yellow);
-                                console.log('Close'.red);
+                            useDProc.on('close', function(code) {
+                                outputs.should.matchAny(strings.use.invalid_device);
                                 done();
                             });
                         });
@@ -482,142 +513,72 @@ describe('Matrix CLI commands', function () {
                     });
                     context('Current user doesn\'t have permission to use specified device', function () {
                         it('should show an "invalid device" warning', function (done) {
-                            var useProc = run('matrix', ['use']);
-
-                            useProc.stdout.on('data', function (out) { });
-
-                            useProc.on('close', function (code) {
-                                console.log('invalid device (doesn\'t have permission)'.yellow);
-                                console.log('Close'.red);
+                            var useProc = run('matrix', ['use','xxx']);
+                            var outputs = new Array();
+                            useProc.stdout.on('data', function(out) {
+                                outputs.push(out.toString());
+                            });
+                            useProc.on('close', function(code) {
+                                outputs.should.matchAny(strings.use.doesnt_permission);
                                 done();
                             });
                         });
                     });
-                    context('Specified device exists', function () {
+                     context('Specified device exists', function () {
                         it('Show set device as current device', function (done) {
                             var useProc = run('matrix', ['use', 'AdBeacon1']);
-                            useProc.stdout.on('data', function (out) { });
-                            useProc.on('close', function (code) {
-                                console.log('Device selllllect successfully........'.cyan);
-                                console.log('Close'.red);
+                            var outputs = new Array();
+                            useProc.stdout.on('data', function(out) {
+                                outputs.push(out.toString());
+                            });
+                            useProc.on('close', function(code) {
+                                outputs.should.matchAny(new RegExp(strings.use.conect_device_successfully));
                                 done();
                             });
-
+                        
                         });
-
+                         
                     });
                 });
-            }); //use
+            }); // finish use
 
             context('sim', function () {
 
                 context('No parameters specified ', function () {
                     it('Show "sim" command usage', function (done) {
-                        var simProc = run('matrix', ['sim']);
-                        simProc.stdout.on('data', function (out) { });
-                        simProc.on('close', function (code) {
-                            console.log('Please select on device "matrix sim [ init, restore, start, stop, save, clear ]"'.cyan);
-                            console.log('Close'.red);
+                        var simProc = run('matrix', ['sim','']);
+                        var outputs = new Array();
+                        simProc.stdout.on('data', function(out) {
+                            outputs.push(out.toString());
+                        });
+
+                        simProc.on('close', function(code) {
+                            outputs.should.matchAny(new RegExp(strings.sim.sim_usage_command));
                             done();
                         });
                     });
                 });
-                context('Parameters specified init brayan', function () {
+                context('Parameters specified init ', function () {
+                   
                     context('init', function () {
-                        it('should request simulator settings 1!!', function (done) {
-                            /* var loginProc = run('matrix', ['login']);
-                      loginProc.stdout.on('data', function(out) {
-                          
-                          if (out.toString().indexOf('username') > -1) {
-                              //console.log('>>>>>>>>>>>USERNAME');
-                              loginProc.stdin.write('demo.admobilize@gmail.com\n')
-                          } else if (out.toString().indexOf('password') > -1) {
-                             // console.log('>>>>>>>>>>>PASSWORDDD');
-                              loginProc.stdin.write('admobdemo2016\n')
-                          } else if (out.toString().indexOf('Login Successful') > -1) {
-                              //console.log('>>>>>>>>>>LOGIN1');
-                              // console.log(out.toString().red);
-                              if (readConfig().user.hasOwnProperty('token')) {
-                                //  console.log('>>>>>>>>>>>TOKENN');
-                                  console.log(out.toString().red);
-                                  //done();
-                              }
-                          }
-                             });*/
-
-                            var loginProc = run('matrix', ['sim', 'init']);
-                            loginProc.stdout.on('data', function (out) {
-                                //console.log('Brayan >>>>>>>',out.toString());
-                                if (out.toString().indexOf('Please') > -1) {
-                                    loginProc.stdin.write('\n'),
-                                        loginProc.stdin.write('AAAA\n');
-                                    //console.log('>>>>>>>>>>>Please', out.toString());
-                                    if (out.toString().indexOf('name') > -1) {
-                                        console.log('>>>>>>>>>>>NAMEEEE', out.toString());
-                                        loginProc.stdin.write('AAAAAAA\n')
-                                    } else if (out.toString().indexOf('description') > -1) {
-                                        console.log('>>>>>>>>>>>description');
-                                        loginProc.stdin.write('XAAA\n')
-                                    } else if (out.toString().indexOf('Login Successful') > -1) {
-                                        console.log('>>>>>>>>>>NOOOO>');
-                                        // console.log(out.toString().red);
-                                        if (readConfig().user.hasOwnProperty('token')) {
-                                            console.log('>>>>>>>>>>reddddd>');
-                                            console.log(out.toString().red);
-                                            done();
-                                        }
-                                        console.log(out.toString());
-
-                                    }
-                                }
-                            });
-
-                            loginProc.on('close', function (code) {
-                                console.log('initialize your simulator'.cyan);
-                                console.log('Close'.red);
-                                done();
-                            });
-                        });
-                        /*it('should request simulator settings 1!!', function(done) {
-                            console.log('>>>>>>>>>HOLAAAAA>');
+                        it('should request simulator settings', function (done) {
                             var simProc = run('matrix', ['sim', 'init']);
-                             console.log('>>>>>>>>>HOLAAAAA 555');
+                            var outputs = new Array(); 
                             simProc.stdout.on('data', function(out) {
-                                console.log('>>>>>>>>>DANNNN>');
-                                if (out.toString().indexOf('Please') > -1) {
-                                    loginProc.stdin.write('\n')
-                                            console.log('>>>>>>>>>>>Please',out.toString());
-                                        } else if (out.toString().indexOf('name') > -1) {
-                                            console.log('>>>>>>>>>>>NAME');
-                                            loginProc.stdin.write('XXXXXXX\n')
-                                        } else if (out.toString().indexOf('description') > -1) {
-                                            console.log('>>>>>>>>>>>description');
-                                            loginProc.stdin.write('XXXXXXX\n')
-                                        }else if (out.toString().indexOf('Login Successful') > -1) {
-                                            console.log('>>>>>>>>>>NOOOO>');
-                                            // console.log(out.toString().red);
-                                            if (readConfig().user.hasOwnProperty('token')) {
-                                                console.log('>>>>>>>>>>reddddd>');
-                                                console.log(out.toString().red);
-                                                done();
-                                            }
-                                            console.log(out.toString());
-                                 
-                                     }  
+                                out.should.matchAny(new RegExp(strings.sim.sim_init_request_credencials));
+                                    done();
                             });
-
-                            simProc.on('close', function(code) {
-                                console.log('BRAYAN');
-                                console.log('Please enter simulatorName'.cyan);
-                                console.log('Close'.red);
-                                done();
-                            });
-                        }); */
+                            
+                       
+                        });
+                    
                     });
 
                     context('Simulator hasn\'t been initialized', function () {
                         context('restore', function () {
-                            it.skip('should show an "initialize simulator" warning', function (done) { });
+                            it.skip('should show an "initialize simulator" warning', function (done) { 
+                                var simProc = run('matrix', ['sim', 'init']);
+                            });
                         });
 
                         context('start', function () {
