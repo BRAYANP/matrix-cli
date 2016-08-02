@@ -50,6 +50,71 @@ strings = {
     },
     reboot: {
         reboot_unable_reach_device: '',
+    },
+    search: {
+        search_no_parameter_specified: 'matrix search',
+        search_warning_parameters_invalid: 'Your needle is too small to find in our haystack',
+    },
+    install: {
+        install_warning_command_usage: 'selected [app/sensor]',
+        install_parameter_invalid: 'No application',
+        install_warning_already_installed: 'app already installed',
+        install_app_successfully: 'installing hello1'
+    },
+    config: {
+        config_warning_command_usage: 'matrix config',
+        config_warning_app_dont_exist: 'specified app doesn\`t exist ',
+        config_warning_set_key_please: 'matrix config (appName) <key>',
+
+    },
+    uninstall: {
+        uninstall_warning_command_use: 'error: missing required argument `app',
+        uninstall_warning_specified_app_dont_exist: 'specified app doesn\'t exist',
+        uninstall_warning_device_offline: 'device is offline',
+        uninstall_app_successfully: 'App uninstall successfully'
+    },
+    update: {
+        update_warning_command_usage: 'matrix update',
+        update_warning_app_doesnt_install: 'This device doesnt  have the app installed',
+        update_successfully_latest_version: 'App update successfully to its latest version',
+        update_warning_version_doesnt_exist: 'this version doesnt exist',
+        update_version_specified: 'version specified update successfully',
+        update_version_parameter_unknown: 'parameter doesnt exist'
+    },
+    start: {
+        start_warning_command_usage: 'start commands usage',
+        start_app_running: 'start app running on the active MatrixOS',
+        start_app_parameter_unknown: 'parameter doesnt exist'
+    },
+    stop: {
+        stop_command_usage: 'matrix stop usa',
+        stop_parammeter_doesnt_exit: 'parameter doesnt exist',
+        stops_app_running_active_matrixOS: 'stops the apps actives successfully'
+    },
+    restart: {
+        restart_command_usage: 'restart command usage',
+        restart_command_doesnt_exists: 'parameter doesnt exist',
+        restart_app_running_MatrixOs: 'restart app successfully'
+    },
+    create: {
+        create_command_usage: 'Must specify app name',
+        create_app_spcified_doesnt_exist: 'parameter doesnt exist',
+        create_app_successfully: 'scaffolding create successfully'
+    },
+    deploy: {
+        deploy_command_usage: 'deploy command usage',
+        deploy_command_doesnt_exist: 'parameter doesnt exist',
+        deploy_app_successfully: 'deploy app successfully'
+    },
+    trigger: {
+        trigger_command_usage: 'trigger command usage ',
+        trigger_parameter_doesnt_exist: 'parameter doesnt exist',
+        trigger_test_run_successfully: 'running test trigger'
+    },
+    log: {
+        log_command_usage: 'command usage `matrix log` <device>, <app> ',
+        log_device_doesnt_exist: 'device and app doesnt exist',
+        log_successfully: 'logs'
     }
 }
 
@@ -81,7 +146,7 @@ describe('Matrix CLI commands', function() {
             it('should request user credentials...', function(done) {
                 this.timeout(15000);
                 var loginProc = run('matrix', ['login']);
-                var outputs = [];
+                var outputs = new Array();
                 loginProc.stdout.on('data', function(out) {
                     outputs.push(out.toString());
                     if (out.indexOf('username') > -1) {
@@ -1260,65 +1325,198 @@ describe('Matrix CLI commands', function() {
 
         context('reboot', function() {
             context('Unable to reach device', function() {
-                it.skip('should return an error', function(done) {
+                it('should return an error', function(done) {
+                    var setProc = run('matrix', ['reboot']);
+                    var outputs = new Array();
+                    setProc.stdout.on('data', function(out) {
+                        console.log('>>>>', out.toString());
+                        outputs.push(out.toString());
+                    });
 
+                    setProc.on('close', function(code) {
+                        outputs.should.matchAny(/Use "Matrix Login"/)
+                        console.log('close', outputs)
+                        done();
+                    });
                 });
             });
             context('Device is alive', function() {
                 it.skip('should reboot the current device', function(done) {});
             });
-        }); //finish reboot
+        }); //finish reboot Pending error tokens 
 
         context('search', function() {
             context('No parameters specified', function() {
-                it.skip('should show command "search" usage', function(done) {});
+                it.skip('should show command "search" usage', function(done) {
+                    var searchProc = run('matrix', ['search']);
+                    var outputs = new Array();
+                    searchProc.stdout.on('data', function(out) {
+                        console.log('>>>>>>>', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    searchProc.on('close', function(code) {
+                        console.log('CLOSE', outputs);
+                        outputs.should.matchAny(new RegExp(strings.search.search_no_parameter_specified));
+                        done();
+                    })
+                });
             });
 
             context('Parameters specified', function() {
                 context('search term has less than 2 characters', function() {
-                    it.skip('should show a search term warning', function(done) {});
+                    it.skip('should show a search term warning', function(done) {
+                        var searchProc = run('matrix', ['search', 'xx']);
+                        var outputs = new Array();
+                        searchProc.stderr.on('data', function(out) {
+                            console.log('>>>>>>>', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        searchProc.on('close', function(code) {
+                            console.log('CLOSE', outputs);
+                            outputs.should.matchAny(new RegExp(strings.search.search_warning_parameters_invalid));
+                            done();
+                        })
+
+                    });
                 });
 
                 context('search term has more than 2 characters', function() {
-                    it.skip('should list the results of an app search', function(done) {});
+                    it.skip('should list the results of an app search', function(done) {
+                        var searchProc = run('matrix', ['search', 'xxx']);
+                        var outputs = new Array();
+                        searchProc.stderr.on('data', function(out) {
+                            console.log('>>>>>>>', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        searchProc.on('close', function(code) {
+                            console.log('CLOSE', outputs);
+                            outputs.should.matchAny(new RegExp(strings.search.search_warning_parameters_invalid));
+                            done();
+                        })
+                    });
                 });
             });
 
-        }); //finish search
+        }); //finish search pending (matrix search XXX) by return on a table ! 
 
         context('install', function() {
             context('No parameters specified', function() {
-                it.skip('should show command "search" usage', function(done) {});
+                it.skip('should show command "install" usage', function(done) {
+                    var installProc = run('matrix', ['install']);
+                    var outputs = new Array();
+                    installProc.stderr.on('data', function(out) {
+                        outputs.push(out.toString());
+                    });
+
+                    installProc.on('close', function(code) {
+                        outputs.should.matchAny(new RegExp(strings.install.install_warning_command_usage));
+                        done();
+                    });
+
+                });
             });
 
             context('Parameters specified', function() {
                 context('Invalid app/sensor name', function() {
-                    it.skip('should show invalid "app/sensor" warning', function(done) {});
+                    it.skip('should show invalid "app/sensor" warning', function(done) {
+                        var installProc = run('matrix', ['install', 'XXXX'])
+                        var outputs = new Array();
+                        installProc.stderr.on('data', function(out) {
+                            outputs.push(out.toString());
+                        });
+
+                        installProc.on('close', function(code) {
+                            outputs.should.matchAny(new RegExp(strings.install.install_parameter_invalid));
+                            done();
+                        });
+                    });
                 });
 
                 context('Valid app/sensor name', function() {
                     context('app is already installed', function() {
-                        it.skip('should show warning app already installed', function(done) {});
+                        it.skip('should show warning app already installed', function(done) {
+                            var installProc = run('matrix', ['install', 'Test Ruben']);
+                            var outputs = new Array();
+                            installProc.stdout.on('data', function(out) {
+                                outputs.push(out.toString());
+                                outputs.should.matchAny(new RegExp(strings.install.install_warning_already_installed));
+                                done();
+                            });
+                        });
                     });
                     context('app isn\'t already installed', function() {
-                        it.skip('should install the app or sensor specified to active MatrixOS device', function(done) {});
+                        it.skip('should install the app or sensor specified to active MatrixOS device', function(done) {
+                            var installProc = run('matrix', ['install', 'hello1']);
+                            var outputs = new Array();
+                            installProc.stdout.on('data', function(out) {
+                                outputs.push(out.toString());
+                                outputs.should.matchAny(new RegExp(strings.install.install_app_successfully));
+                                done();
+                            });
+                        });
                     });
                 });
             });
-        }); //finish install
+        }); //finish install  
 
-        context('config', function() {
+        context('config', function() { //pending by error tokens 
             context('No parameters specified', function() {
-                it.skip('should show device configurations', function(done) {});
+                it.skip('should show device configurations', function(done) {
+                    var configProc = run('matrix', ['config']);
+                    var outputs = new Array();
+                    configProc.stdout.on('data', function(out) {
+                        console.log('>>>>>', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    configProc.on('close', function(code) {
+                        console.log('CLOSEEEE', outputs);
+                        outputs.should.matchAny(new RegExp(strings.config.config_warning_command_usage));
+                        done();
+                    })
+                });
             });
 
             context('Parameters specified', function() {
+
                 context('specified app doesn\'t exist', function() {
-                    it.skip('should show an "specified app doesn\'t exist" warning', function(done) {});
+                    it.skip('should show an "specified app doesn\'t exist" warning', function(done) {
+                        var configProc = run('matrix', ['config', 'XXXXX']);
+                        var outputs = new Array();
+
+                        configProc.stderr.on('data', function(out) {
+                            console.log('>>>>>', out.toString());
+                            outputs.push(out.toString());
+                            console.log('>>>>>>>>>>>', outputs);
+                            outputs.should.matchAny(new RegExp(strings.config.config_warning_app_dont_exist));
+                            done();
+                        })
+
+                    });
                 });
                 context('specified app exists', function() {
                     context('app', function() {
-                        it.skip('should show application configurations', function(done) {});
+                        it('should show application configurations', function(done) {
+
+                            var configProc = run('matrix', ['config', 'XXXXX']);
+                            var outputs = new Array();
+                            configProc.stdout.on('data', (out) => {
+                                outputs.push(out.toString());
+                                console.log(outputs, '<<<<<<<<<'.magenta);
+                                outputs.should.matchAny(new RegExp(strings.config.config_warning_set_key_please));
+                                done()
+                            })
+                            configProc.stderr.on('data', (out) => {
+                                console.log(`stderrDD: ${out}`.blue);
+                                console.log('>>>>>', out.toString().blue);
+                                done();
+
+                            });
+                            configProc.on('close', (code) => {
+                                console.log(`child process exited with code ${code}`.red);
+                                console.log('>>>>>', out.toString().magenta);
+                                done();
+                            });
+                        });
                     });
 
                     context('app key', function() {
@@ -1336,206 +1534,680 @@ describe('Matrix CLI commands', function() {
                     });
                 });
             });
-        }); //finish config
+        }); //finish config   with errors
 
         context('uninstall', function() {
             context('No parameters specified', function() {
-                it.skip('should show command "uninstall" usage', function(done) {});
+                it.skip('should show command "uninstall" usage', function(done) {
+                    var uninstallProc = run('matrix', ['uninstall']);
+                    var outputs = new Array();
+                    uninstallProc.stdout.on('data', (out) => {
+                        console.log(out.toString(), 'stdout'.blue);
+                    })
+                    uninstallProc.stderr.on('data', (out) => {
+                        console.log(out.toString(), 'stderr'.red);
+                        outputs.push(out.toString());
+                    })
+                    uninstallProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.uninstall.uninstall_warning_command_use));
+                        done();
+                    })
+                });
             });
 
             context('Parameters specified', function() {
                 context('specified app doesn\'t exist', function() {
-                    it.skip('should show a "specified app doesn\'t exist" warning', function(done) {});
+                    it.skip('should show a "specified app doesn\'t exist" warning', function(done) {
+                        var uninstallProc = run('matrix', ['uninstall', 'XXXX']);
+                        var outputs = new Array();
+                        uninstallProc.stdout.on('data', (out) => {
+                            console.log('stdout');
+                        })
+                        uninstallProc.stderr.on('data', (out) => {
+                            uninstallProc.kill('SIGINT');
+                            outputs.push(out.toString());
+                        })
+                        uninstallProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.uninstall.uninstall_warning_specified_app_dont_exist));
+                            done();
+                        })
+                    });
                 });
 
                 context('specified app exists', function() {
                     context('device is offline', function() {
-                        it.skip('should show a "device is offline" warning', function(done) {});
+                        it.skip('should show a "device is offline" warning', function(done) {
+                            var uninstallProc = run('matrix', ['uninstall', 'MyHealthApp']);
+                            var outputs = new Array();
+                            uninstallProc.stdout.on('data', (out) => {
+                                console.log('stdout');
+                            })
+                            uninstallProc.stderr.on('data', (out) => {
+                                uninstallProc.kill('SIGINT');
+                                outputs.push(out.toString());
+                            })
+                            uninstallProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.uninstall.uninstall_warning_device_offline));
+                                done();
+                            });
+                        });
                     });
 
                     context('device is online', function() {
-                        it.skip('should uninstall the specified app', function(done) {});
+                        it('should uninstall the specified app', function(done) {
+                            var uninstallProc = run('matrix', ['uninstall', 'MyHealthApp']);
+                            var outputs = new Array();
+                            uninstallProc.stdout.on('data', (out) => {
+                                console.log('stdout');
+                            })
+                            uninstallProc.stderr.on('data', (out) => {
+                                uninstallProc.kill('SIGINT');
+                                outputs.push(out.toString());
+                            })
+                            uninstallProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.uninstall.uninstall_app_successfully));
+                                done();
+                            });
+                        });
                     });
                 });
             });
-        }); //finish uninstall
+        }); //finish  (error authenticate and acces token )uninstall   
 
         context('update', function() {
 
             context('No parameters specified', function() {
-                it.skip('should show command "update" usage', function(done) {});
+                it.skip('should show command "update" usage', function(done) {
+                    var updateProc = run('matrix', ['update']);
+                    var outputs = new Array();
+                    updateProc.stdout.on('data', (out) => {
+                        outputs.push(out.toString());
+                    })
+                    updateProc.stderr.on('data', (out) => {
+                        console.log(out, 'stderr');
+                    })
+                    updateProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.update.update_warning_command_usage));
+                        done();
+                    })
+                });
             });
 
             context('Parameters specified', function() {
                 context('app', function() {
                     context('device doesn\'t have the app installed', function() {
-                        it.skip('should show a "device doesn\'t have the app installed"', function(done) {});
+                        it.skip('should show a "device doesn\'t have the app installed"', function(done) {
+                            var updateProc = run('matrix', ['update', 'vehicle'])
+                            var outputs = new Array();
+
+                            updateProc.stdout.on('data', (out) => {
+                                console.log('stdout', out.toString());
+                            })
+                            updateProc.stderr.on('data', (out) => {
+                                outputs.push(out.toString());
+                            })
+                            updateProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.update.update_warning_app_doesnt_install));
+                                done();
+                            })
+                        });
                     });
 
                     context('device has the app installed', function() {
-                        it.skip('should update the application to its latest version', function(done) {});
+                        it.skip('should update the application to its latest version', function(done) {
+                            var updateProc = run('matrix', ['update', 'vehicle'])
+                            var outputs = new Array();
+                            updateProc.stdout.on('data', (out) => {
+                                console.log('stdout', out.toString());
+                            })
+                            updateProc.stderr.on('data', (out) => {
+                                outputs.push(out.toString());
+                            })
+                            updateProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.update.update_successfully_latest_version));
+                                done();
+                            })
+                        });
                     });
 
                     context('app version', function() {
                         context('version doesn\'t exist', function() {
-                            it.skip('should show a version doesn\'t exist warning', function(done) {});
+                            it.skip('should show a version doesn\'t exist warning', function(done) {
+                                var updateProc = run('matrix', ['update', 'vehicle', 'versionFake']);
+                                var outputs = new Array();
+                                updateProc.stdout.on('data', (out) => {
+                                    console.log('stdout', out.toString());
+                                })
+                                updateProc.stderr.on('data', (out) => {
+                                    outputs.push(out.toString());
+                                })
+                                updateProc.on('close', (code) => {
+                                    outputs.should.matchAny(new RegExp(strings.update.update_warning_version_doesnt_exist));
+                                    done();
+                                })
+                            });
                         });
 
                         context('version exists', function() {
-                            it.skip('should update to that version', function(done) {});
+                            it.skip('should update to that version', function(done) {
+                                var updateProc = run('matrix', ['update', 'veryfirstapp', 'version', '0.7'])
+                                var outputs = new Array();
+
+                                updateProc.stdout.on('data', (out) => {
+                                    console.log('stdout', out.toString());
+                                })
+                                updateProc.stderr.on('data', (out) => {
+                                    outputs.push(out.toString());
+                                })
+                                updateProc.on('close', (code) => {
+                                    outputs.should.matchAny(new RegExp(strings.update.update_version_specified));
+                                    done();
+                                })
+                            });
                         });
                     });
 
                     context('unknown parameter', function() {
-                        it.skip('should show a "parameter doesn\'t exist "', function(done) {});
-                    });
-                });
-            }); //finish update
-
-
-            context('start', function() {
-
-                context('No parameters specified', function() {
-                    it.skip('should show command "start" usage', function(done) {});
-                });
-
-                context(' parameters specified', function() {
-                    context('start', function() {
-                        it.skip('Starts an app running on the active MatrixOS', function(done) {});
-                    });
-                    context('unknown parameter', function() {
-                        it.skip('should show an "parameter doesn\'t exist', function(done) {});
-                    });
-
-                });
-            }); //finish start
-
-
-
-
-            context('stop', function() {
-
-                context('No parameters specified', function() {
-                    it.skip('should show command "stop" usage', function(done) {});
-                });
-
-                context(' parameters specified', function() {
-                    context('unknown parameter', function() {
-                        it.skip('should show an "parameter doesn\'t exist', function(done) {});
-                    });
-                    context('stop', function() {
-                        it.skip('Stops an app running on the active MatrixOS', function(done) {});
-                    });
-                });
-            }); //stop
-
-
-            context('restart', function() {
-
-                context('No parameters specified', function() {
-                    it.skip('should show command "restart" usage', function(done) {});
-                });
-
-                context(' parameters specified', function() {
-                    context('unknown parameter', function() {
-                        it.skip('should show an "parameter doesn\'t exist', function(done) {});
-                    });
-
-                    context('restart', function() {
-                        it.skip('Restarts an app running on the MatrixOS', function(done) {});
-
-                    });
-                });
-            }); //stop
-
-
-
-            context('create', function() {
-
-                context('No parameters specified', function() {
-                    it.skip('should show commands "create" usage', function(done) {});
-                });
-
-                context('parameter specified', function() {
-                    context('unknown parameter', function() {
-                        it.skip('should show an "parameter doesn\'t exist', function(done) {});
-                    });
-                });
-                context('create', function() {
-                    context('No name specified to device create', function() {
-                        it.skip('should show an message "specified an name to device"', function(done) {});
-                    });
-                    context('specified to name device create', function() {
-                        it.skip('Creates a new scaffolding for a MatrixOS Application', function(done) {});
+                        it('should show a "parameter doesn\'t exist "', function(done) {
+                            var updateProc = run('matrix', ['update', 'veryfirstapp', 'version', 'XXXXX'])
+                            var outputs = new Array();
+                            updateProc.stdout.on('data', (out) => {
+                                console.log('stdout', out.toString());
+                            })
+                            updateProc.stderr.on('data', (out) => {
+                                outputs.push(out.toString());
+                            })
+                            updateProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.update.update_version_parameter_unknown));
+                                done();
+                            })
+                        });
                     });
                 });
             });
-        }); //finish create
+        }); // finish update  error "if (version === undefined)"
+
+
+        context('start', function() {
+
+            context('No parameters specified', function() {
+                it.skip('should show command "start" usage', function(done) {
+                    var startProc = run('Matrix', ['start', ''])
+                    var outputs = new Array();
+
+                    startProc.stdout.on('data', (out) => {
+                        console.log('stdout', out.toString());
+                    })
+                    startProc.stderr.on('data', (out) => {
+                        startProc.kill('SIGINT');
+                        outputs.push(out.toString());
+                    })
+                    startProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.start.start_warning_command_usage));
+                        done();
+                    })
+                });
+            });
+
+            context(' parameters specified', function() {
+                context('start', function() {
+                    it.skip('Starts an app running on the active MatrixOS', function(done) {
+                        var startProc = run('Matrix', ['start', 'vehicle'])
+                        var outputs = new Array();
+
+                        startProc.stdout.on('data', (out) => {
+                            console.log('stdout', out.toString());
+                        })
+                        startProc.stderr.on('data', (out) => {
+                            startProc.kill('SIGINT');
+                            outputs.push(out.toString());
+                        })
+                        startProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.start.start_app_running));
+                            done();
+                        })
+                    });
+                });
+                context('unknown parameter', function() {
+                    it.skip('should show an "parameter doesn\'t exist', function(done) {
+                        var startProc = run('Matrix', ['start', 'XXXX'])
+                        var outputs = new Array();
+                        startProc.stdout.on('data', (out) => {
+                            console.log('stdout', out.toString());
+                        });
+                        startProc.stderr.on('data', (out) => {
+                            console.log('stderr', out.toString());
+                            startProc.kill('SIGINT');
+                            outputs.push(out.toString());
+                        })
+                        startProc.on('close', (code) => {
+                            console.log('close', code);
+                            outputs.should.matchAny(new RegExp(strings.start.start_app_parameter_unknown));
+                            done();
+                        })
+                    });
+                });
+
+            });
+        }); // finish start error " client registration fail"
+
+
+
+
+        context('stop', function() {
+
+            context('No parameters specified', function() {
+                it.skip('should show command "stop" usage', function(done) {
+                    var stopProc = run('matrix', ['stop', ''])
+                    var outputs = new Array();
+
+                    stopProc.stdout.on('data', (out) => {
+                        outputs.push(out.toString());
+                        stopProc.kill('SIGINT');
+                    })
+                    stopProc.stderr.on('data', (out) => {
+                        stopProc.kill('SIGINT');
+                    })
+                    stopProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.stop.stop_command_usage));
+                        done();
+                    })
+                });
+            });
+
+            context(' parameters specified', function() {
+                context('unknown parameter', function() {
+                    it.skip('should show an "parameter doesn\'t exist', function(done) {
+                        var stopProc = run('Matrix', ['stop', 'XXXX'])
+                        var outputs = new Array();
+
+                        stopProc.stdout.on('data', (out) => {
+                            outputs.push(out.toString());
+                            stopProc.kill('SIGINT');
+                        })
+                        stopProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                            stopProc.kill('SIGINT');
+                        })
+                        stopProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.stop.stop_parammeter_doesnt_exit));
+                            done();
+                        })
+                    });
+                });
+                context('stop', function() {
+                    it('Stops an app running on the active MatrixOS', function(done) {
+                        var stopProc = run('Matrix', ['stop', 'vehicle'])
+                        var outputs = new Array();
+                        stopProc.stdout.on('data', (out) => {
+                            outputs.push(out.toString());
+                            stopProc.kill('SIGINT');
+
+                        })
+                        stopProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                            stopProc.kill('SIGINT');
+                        })
+                        stopProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.stop.stops_app_running_active_matrixOS));
+                            done();
+                        })
+                    });
+                });
+            });
+        }); //finish stop ERROR FAIL AUTHENTICATE !! 
+
+
+        context('restart', function() {
+
+            context('No parameters specified', function() {
+                it.skip('should show command "restart" usage', function(done) {
+                    var restartProc = run('Matrix', ['restart', '']);
+                    var outputs = new Array();
+
+                    restartProc.stdout.on('data', (out) => {
+                        outputs.push(out.toString());
+                        restartProc.kill('SIGINT');
+                    })
+                    restartProc.stderr.on('data', (out) => {
+                        outputs.push(out.toString());
+                        restartProc.kill('SIGINT');
+                    })
+                    restartProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.restart.restart_command_usage));
+                        done();
+                    })
+                });
+            });
+
+            context(' parameters specified', function() {
+                context('unknown parameter', function() {
+                    it.skip('should show an "parameter doesn\'t exist', function(done) {
+                        var restartProc = run('Matrix', ['restart', 'XXXX']);
+                        var outputs = new Array();
+
+                        restartProc.stdout.on('data', (out) => {
+                            outputs.push(out.toString());
+                            restartProc.kill('SIGINT');
+                        })
+                        restartProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                            restartProc.kill('SIGINT');
+                        })
+                        restartProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.restart.restart_command_doesnt_exists));
+                            done();
+                        })
+                    });
+                });
+
+                context('restart', function() {
+                    it('Restarts an app running on the MatrixOS', function(done) {
+                        var restartProc = run('Matrix', ['restart', 'vehicle']);
+                        var outputs = new Array();
+
+                        restartProc.stdout.on('data', (out) => {
+                            outputs.push(out.toString());
+                            restartProc.kill('SIGINT');
+                        })
+                        restartProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                            restartProc.kill('SIGINT');
+                        })
+                        restartProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.restart.restart_app_running_MatrixOs));
+                            done();
+                        })
+                    });
+
+                });
+            });
+        }); //finish restart ERROR (Application.restart(admatrix.config, cb);)
+
+
+        context('create', function() {
+
+            context('No parameters specified', function() {
+                it.skip('should show commands "create" usage', function(done) {
+                    var createProc = run('matrix', ['create'])
+                    var outputs = new Array();
+
+                    createProc.stdout.on('data', (out) => {
+                        console.log('stdout>>>>>>>', out.toString());
+                    })
+                    createProc.stderr.on('data', (out) => {
+                        console.log('stderr', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    createProc.on('close', (code) => {
+                        console.log('close', outputs);
+                        outputs.should.matchAny(new RegExp(strings.create.create_command_usage));
+                        done();
+                    })
+                });
+            });
+
+            context('parameter specified', function() {
+                context('unknown parameter', function() {
+                    it.skip('should show an "parameter doesn\'t exist', function(done) {
+                        var createProc = run('matrix', ['create', 'XXXXXX'])
+                        var outputs = new Array();
+
+                        createProc.stdout.on('data', (out) => {
+                            console.log('stdout>>>>>>>', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        createProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                        })
+                        createProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.create.create_app_spcified_doesnt_exist));
+                            done();
+                        })
+                    });
+                });
+            });
+            context('specified to name device create', function() {
+                it('Creates a new scaffolding for a MatrixOS Application', function(done) {
+
+                    var createProc = run('matrix', ['create', 'test'])
+                    var outputs = new Array();
+
+                    createProc.stdout.on('data', (out) => {
+                        console.log('stdout>>>>>>>', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    createProc.stderr.on('data', (out) => {
+                        outputs.push(out.toString());
+                    })
+                    createProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.create.create_app_successfully));
+                        done();
+                    })
+                });
+            });
+
+        }); // finish create 'ERROR' 
 
 
 
 
         context('deploy', function() {
             context('No parameters specified', function() {
-                it.skip('should show commands "deploy" usage', function(done) {});
+                it.skip('should show commands "deploy" usage', function(done) {
+                    var deployProc = run('matrix', ['deploy']);
+                    var outputs = new Array();
+
+                    deployProc.stdout.on('data', (out) => {
+                        console.log('stdout', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    deployProc.stderr.on('data', (out) => {
+                        console.log('stderr', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    deployProc.on('close', (code) => {
+                        console.log('close', code);
+                        outputs.should.matchAny(new RegExp(strings.deploy.deploy_command_usage));
+                        done();
+                    })
+                });
             });
 
             context('parameters specified', function() {
                 context('unknown parameter', function() {
-                    it.skip('should show an "parameter doesn\'t exist', function(done) {});
+                    it.skip('should show an "parameter doesn\'t exist', function(done) {
+
+                        var deployProc = run('matrix', ['deploy', 'XXXXX']);
+                        var outputs = new Array();
+
+                        deployProc.stdout.on('data', (out) => {
+                            console.log('stdout', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        deployProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                        })
+                        deployProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.deploy.deploy_command_doesnt_exist));
+                            done();
+                        })
+                    });
                 });
-                context('deploy', function() {
-                    it.skip('Deploys an app to the active MatrixOS', function(done) {});
+                context('name device correct', function() {
+                    it('Deploys an app to the active MatrixOS', function(done) {
+                        var deployProc = run('matrix', ['deploy', 'vehicle']);
+                        var outputs = new Array();
+
+                        deployProc.stdout.on('data', (out) => {
+                            console.log('stdout', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        deployProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                        })
+                        deployProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.deploy.deploy_app_successfully));
+                            done();
+                        })
+                    });
                 });
 
             });
-        }); //finish deploy
+        }); // finish deploy 'ERROR'
 
 
 
 
         context('trigger', function() {
             context('No parameters specified', function() {
-                it.skip('should show commands "trigger" usage', function(done) {});
+                it.skip('should show commands "trigger" usage', function(done) {
+                    var triggerProc = run('matrix', ['trigger']);
+                    var outputs = new Array();
+
+                    triggerProc.stdout.on('data', (out) => {
+                        console.log('stdout', out.toString());
+                        outputs.push(out.toString());
+                    })
+                    triggerProc.stderr.on('data', (out) => {
+                        outputs.push(out.toString());
+                    })
+                    triggerProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.trigger.trigger_command_usage));
+                        done();
+                    })
+                });
             });
             context('parameters specified', function() {
                 context('unknown parameter specified  ', function() {
-                    it.skip('should show an "parameter doesn\'t exist', function(done) {});
+                    it.skip('should show an "parameter doesn\'t exist', function(done) {
+                        var triggerProc = run('matrix', ['trigger', 'XXXXX']);
+                        var outputs = new Array();
+
+                        triggerProc.stdout.on('data', (out) => {
+                            console.log('stdout', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        triggerProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                        })
+                        triggerProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.trigger.trigger_parameter_doesnt_exist));
+                            done();
+                        })
+                    });
                 });
                 context(' parameter specified is trigger ', function() {
-                    it.skip('Runs a trigger test', function(done) {});
+                    it('Runs a trigger test', function(done) {
+                        var triggerProc = run('matrix', ['trigger', 'test']);
+                        var outputs = new Array();
+
+                        triggerProc.stdout.on('data', (out) => {
+                            console.log('stdout', out.toString());
+                            outputs.push(out.toString());
+                        })
+                        triggerProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                            triggerProc.kill('SIGINT');
+                        })
+                        triggerProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.trigger.trigger_test_run_successfully));
+                            done();
+                        })
+                    });
                 });
 
             });
 
-        }); //trigger
+        }); //finish trigger ERROR (client registration fail)
 
 
         context('log', function() {
             context('No parameters specified', function() {
-                it.skip('should show commands "log" usage', function(done) {});
+                it.skip('should show commands "log" usage', function(done) {
+                    var triggerProc = run('matrix', ['log']);
+                    var outputs = new Array();
+
+                    triggerProc.stdout.on('data', (out) => {
+                        outputs.push(out.toString());
+                    })
+                    triggerProc.stderr.on('data', (out) => {
+                        outputs.push(out.toString());
+                        triggerProc.kill('SIGINT');
+                    })
+                    triggerProc.on('close', (code) => {
+                        outputs.should.matchAny(new RegExp(strings.log.log_command_usage));
+                        done();
+                    })
+                });
             });
             context(' parameters specified', function() {
                 context('no device and app assigned', function() {
-                    it.skip('should show  "Select on device o app " ', function(done) {});
+                    it.skip('should show  "Select on device o app " ', function(done) {
+                        var triggerProc = run('matrix', ['log', '']);
+                        var outputs = new Array();
+
+                        triggerProc.stdout.on('data', (out) => {
+                            outputs.push(out.toString());
+                            triggerProc.kill('SIGINT');
+                        })
+                        triggerProc.stderr.on('data', (out) => {
+                            outputs.push(out.toString());
+                            triggerProc.kill('SIGINT');
+                        })
+                        triggerProc.on('close', (code) => {
+                            outputs.should.matchAny(new RegExp(strings.log.log_command_usage));
+                            done();
+                        })
+                    });
                 });
                 context(' device and app assigned', function() {
 
-                    context('unknown parameter specified', function() {
-                        it.skip('should show commands "log" usage', function(done) {});
+                    context('unknown device and app specified', function() {
+                        it.skip('should show commands "log" usage', function(done) {
+                            var triggerProc = run('matrix', ['log', 'XXXXXXX', 'XXXXXXX']);
+                            var outputs = new Array();
+
+                            triggerProc.stdout.on('data', (out) => {
+                                outputs.push(out.toString());
+                                triggerProc.kill('SIGINT');
+                            })
+                            triggerProc.stderr.on('data', (out) => {
+                                outputs.push(out.toString());
+                                triggerProc.kill('SIGINT');
+                            })
+                            triggerProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.log.log_device_doesnt_exist));
+                                done();
+                            })
+                        });
                     });
                     context('log', function() {
-                        it.skip('Logs output from selected MatrixOS and applications', function(done) {});
+                        it('Logs output from selected MatrixOS and applications', function(done) {
+                            var triggerProc = run('matrix', ['log', 'AdBeacon1', 'vehicle']);
+                            var outputs = new Array();
+
+                            triggerProc.stdout.on('data', (out) => {
+                                outputs.push(out.toString());
+                                triggerProc.kill('SIGINT');
+                            })
+                            triggerProc.stderr.on('data', (out) => {
+                                outputs.push(out.toString());
+                                triggerProc.kill('SIGINT');
+                            })
+                            triggerProc.on('close', (code) => {
+                                outputs.should.matchAny(new RegExp(strings.log.log_successfully));
+                                done();
+                            })
+                        });
                     });
                 });
             });
-        }); //finish log
+        }); // finish log 'ERROR' 
+
 
     });
 });
-//});
-//});
-
 
 function readConfig() {
     return JSON.parse(require('fs').readFileSync('./tmp/store.json'));
